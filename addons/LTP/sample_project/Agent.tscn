@@ -1,0 +1,48 @@
+[gd_scene load_steps=3 format=3 uid="uid://blt64y0rldntt"]
+
+[ext_resource type="Texture2D" uid="uid://b0axsfn3vx67u" path="res://addons/LTP/sample_project/icon.svg" id="1_vi38n"]
+
+[sub_resource type="GDScript" id="GDScript_vi38n"]
+script/source = "extends Agent
+
+var food = 7.
+
+var walk_speed = 15
+
+func _init() -> void:
+	super()
+	LTPTicker.start() # start it in your game root, not here and only once for all instances
+	new_objective(DontStarve.new(self))
+
+func move_towards(to: Vector2):
+	var direction = to - self.position
+	if direction.length() <= walk_speed:
+		self.position = to
+		return
+	var dir = direction.normalized()
+	self.position = self.position + dir * walk_speed
+	
+func _update():
+	var debug_view = get_parent().get_node(\"CanvasLayer/DebugView\") # dont do it like that if you have globals you can use
+	debug_view.update_graph(self.objectives)
+	food = food -0.13
+	var food_label =  get_parent().get_node(\"CanvasLayer/Food\")
+	food_label.text = \"Food: \" + str(roundf(food*100)/100)
+	if food < 10:
+		food_label.modulate = Color.YELLOW
+	else:
+		food_label.modulate = Color.WHITE
+	if food < 0: # starved
+		food_label.text = \"Starving!\"
+		food_label.modulate = Color.RED
+		# queue_free()  <- lets not do that for the sample
+		
+"
+
+[node name="Agent" type="Node2D"]
+script = SubResource("GDScript_vi38n")
+
+[node name="Icon" type="Sprite2D" parent="."]
+position = Vector2(-1, 0)
+scale = Vector2(0.23, 0.23)
+texture = ExtResource("1_vi38n")

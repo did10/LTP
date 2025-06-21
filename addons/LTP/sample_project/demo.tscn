@@ -1,0 +1,47 @@
+[gd_scene load_steps=5 format=3 uid="uid://div0h5ynqtoh0"]
+
+[ext_resource type="Texture2D" uid="uid://b3jcq8xnxcgnd" path="res://addons/LTP/sample_project/farm.png" id="1_w2h68"]
+[ext_resource type="PackedScene" uid="uid://blt64y0rldntt" path="res://addons/LTP/sample_project/Agent.tscn" id="2_vod4l"]
+[ext_resource type="PackedScene" uid="uid://brnqsdkqo7nch" path="res://addons/LTP/sample_project/debug_view.tscn" id="3_mefna"]
+
+[sub_resource type="GDScript" id="GDScript_4l47j"]
+script/source = "extends Node2D
+"
+
+[node name="SampleScene" type="Node2D"]
+script = SubResource("GDScript_4l47j")
+
+[node name="Farm" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(806, 521)
+scale = Vector2(2.86, 2.86)
+texture = ExtResource("1_w2h68")
+
+[node name="Farm2" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(702, 90)
+scale = Vector2(2.86, 2.86)
+texture = ExtResource("1_w2h68")
+
+[node name="Farm3" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(1024, 466)
+scale = Vector2(2.86, 2.86)
+texture = ExtResource("1_w2h68")
+
+[node name="Agent" parent="." instance=ExtResource("2_vod4l")]
+position = Vector2(850, 226)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="DebugView" parent="CanvasLayer" instance=ExtResource("3_mefna")]
+offset_right = -562.0
+
+[node name="Food" type="Label" parent="CanvasLayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -47.0
+offset_bottom = 23.0
+grow_horizontal = 0
+text = "5 Food"
