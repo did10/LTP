@@ -1,6 +1,5 @@
 class_name GatherFood extends Objective
 
-var farms: Array[Node2D]
 var gathering_progress = 0
 
 func _init(a: Agent) -> void:
@@ -18,7 +17,7 @@ func _stop_work():
 	agent.food = agent.food + 5
 
 func _check_resolved():
-	return gathering_progress > 7 # time it takes to gather food
+	return gathering_progress > 10 # time it takes to gather food
 
 func _reset():
 	gathering_progress = 0

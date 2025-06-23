@@ -2,7 +2,7 @@ class_name DontStarve extends Objective
 
 
 func _init(a: Agent) -> void:
-	super(a, "Dont starve")
+	super(a, "Dont starve: food > 10")
 	
 func _work():
 	add_task(GatherFood.new(agent), "gather")

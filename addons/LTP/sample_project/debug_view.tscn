@@ -149,7 +149,7 @@ func _remove_objective(o: Objective) -> void:
 func get_custom_variables(o: Objective) -> String:
 	var out = \"\"
 	for prop in o.get_property_list():
-		if not parent_props.has(prop.name):
+		if not parent_props.has(prop.name) and not prop.name.ends_with(\".gd\"):
 			out += \"%s: %s\\n\" % [prop.name, o.get(prop.name)]
 	return out
 "
@@ -202,5 +202,4 @@ script = SubResource("GDScript_aof23")
 [node name="GraphEdit" type="GraphEdit" parent="SplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-scroll_offset = Vector2(0, -160)
 zoom = 0.45
