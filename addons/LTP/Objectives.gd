@@ -251,6 +251,6 @@ func task_resolved(key: String)->bool:
 func remove_from_agent(o: Objective) -> void:
 	agent.remove_objective(o)
 	for pre in o._preconditions:
-		agent.remove_objective(o._preconditions[pre])
+		remove_from_agent(o._preconditions[pre])
 	for task in o._tasks:
-		agent.remove_objective(o._tasks[task])
+		remove_from_agent(o._tasks[task])

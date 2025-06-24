@@ -16,7 +16,7 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 
 [autoload]
 
-LTPTicker="*res://addons/LTP/globals/LTPTicker.gd"
+LTPTicker="*res://addons/ltp/globals/LTPTicker.gd"
 
 [editor_plugins]
 

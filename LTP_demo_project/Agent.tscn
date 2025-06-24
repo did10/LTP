@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://blt64y0rldntt"]
 
-[ext_resource type="Texture2D" uid="uid://b0axsfn3vx67u" path="res://addons/LTP/sample_project/icon.svg" id="1_vi38n"]
+[ext_resource type="Texture2D" uid="uid://b0axsfn3vx67u" path="res://LTP_demo_project/icon.svg" id="1_vi38n"]
 
 [sub_resource type="GDScript" id="GDScript_vi38n"]
 script/source = "extends Agent

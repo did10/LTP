@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://div0h5ynqtoh0"]
 
-[ext_resource type="Texture2D" uid="uid://b3jcq8xnxcgnd" path="res://addons/LTP/sample_project/farm.png" id="1_w2h68"]
-[ext_resource type="PackedScene" uid="uid://blt64y0rldntt" path="res://addons/LTP/sample_project/Agent.tscn" id="2_vod4l"]
-[ext_resource type="PackedScene" uid="uid://brnqsdkqo7nch" path="res://addons/LTP/sample_project/debug_view.tscn" id="3_mefna"]
+[ext_resource type="Texture2D" uid="uid://b3jcq8xnxcgnd" path="res://LTP_demo_project/farm.png" id="1_w2h68"]
+[ext_resource type="PackedScene" uid="uid://blt64y0rldntt" path="res://LTP_demo_project/Agent.tscn" id="2_vod4l"]
+[ext_resource type="PackedScene" uid="uid://brnqsdkqo7nch" path="res://LTP_demo_project/debug_view.tscn" id="3_mefna"]
 
 [sub_resource type="GDScript" id="GDScript_4l47j"]
 script/source = "extends Node2D
