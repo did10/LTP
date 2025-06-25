@@ -8,13 +8,14 @@ var _resolved_tasks: Dictionary[String, bool] = {}
 var level = 0
 var priority = 10
 
-var _work_started :=false
+var _work_started := false
 var _work_finished := false
 var _is_paused := false
 var _task_parent = null
 var _resolved := false
 
 var agent: AgentInterface
+var prefered_next_task = null # A task that will be prefered after this task. Helpfull e.g. after a goto 
 
 var debug_text = ""
 
@@ -118,7 +119,7 @@ func reset():
 ## Priority is set by the parent task. So the root task/objective sets the priority of its children.
 ## If a child has a higher priority than its parent's thats keept tho.
 func _raw_score() -> float:
-	return ((1)/(level*0.5)) + priority
+	return ((1)/((level+1)*0.5)) + priority
 
 ## Reset is called if the objective state changes back to start. 
 ## Please implement if you have some state that has to be reset, so the objective looks like newely implemented
