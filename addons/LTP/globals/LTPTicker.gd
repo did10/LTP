@@ -1,7 +1,7 @@
 extends Node
 
 var timer: float = 0.0
-var interval: float = 0.30
+var interval: float = 0.3
 var active = false
 var n_tick := 0
 signal tick(n: int)

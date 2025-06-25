@@ -18,6 +18,11 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 
 LTPTicker="*res://addons/ltp/globals/LTPTicker.gd"
 
+[display]
+
+window/size/viewport_width=1635
+window/size/viewport_height=925
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/LTP/plugin.cfg", "res://addons/ltp/plugin.cfg")

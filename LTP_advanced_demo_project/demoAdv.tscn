@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://lskl08duogmy"]
 
-[ext_resource type="PackedScene" uid="uid://ba7ruxwd6hkg6" path="res://LTP_advanced_demo_project/Agent.tscn" id="1_8krxm"]
-[ext_resource type="PackedScene" uid="uid://brnqsdkqo7nch" path="res://addons/LTP/debug_view.tscn" id="4_dsvcd"]
+[ext_resource type="PackedScene" uid="uid://ba7ruxwd6hkg6" path="res://LTP_advanced_demo_project/Agent.tscn" id="1_jd8qy"]
+[ext_resource type="PackedScene" uid="uid://brnqsdkqo7nch" path="res://addons/LTP/debug_view.tscn" id="2_xif3e"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_nruhl"]
 load_path = "res://.godot/imported/farm.png-6739f7809ff3df82e7552dd3c18a582f.ctex"
@@ -41,13 +41,10 @@ position = Vector2(1594.08, 681.9)
 scale = Vector2(2.31725, 2.31725)
 texture = SubResource("CompressedTexture2D_pkg40")
 
-[node name="Agent" parent="." instance=ExtResource("1_8krxm")]
+[node name="Agent" parent="." instance=ExtResource("1_jd8qy")]
 position = Vector2(1335, 401)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="DebugView" parent="CanvasLayer" instance=ExtResource("4_dsvcd")]
-offset_right = -562.0
 
 [node name="Food" type="Label" parent="CanvasLayer"]
 anchors_preset = 1
@@ -68,3 +65,5 @@ offset_right = 1.0
 offset_bottom = 47.0
 grow_horizontal = 0
 text = "5 Food"
+
+[node name="DebugView" parent="CanvasLayer" instance=ExtResource("2_xif3e")]
