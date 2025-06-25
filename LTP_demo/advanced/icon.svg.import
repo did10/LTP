@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b3jcq8xnxcgnd"
-path="res://.godot/imported/farm.png-6739f7809ff3df82e7552dd3c18a582f.ctex"
+uid="uid://2cl0k0d2bold"
+path="res://.godot/imported/icon.svg-7ba85a5d2babe0fce5a7d02a0f57d261.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://LTP_demo_project/farm.png"
-dest_files=["res://.godot/imported/farm.png-6739f7809ff3df82e7552dd3c18a582f.ctex"]
+source_file="res://LTP_demo/advanced/icon.svg"
+dest_files=["res://.godot/imported/icon.svg-7ba85a5d2babe0fce5a7d02a0f57d261.ctex"]
 
 [params]
 
@@ -32,3 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

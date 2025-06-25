@@ -17,7 +17,7 @@ var parent_props := {}            # Properties from a blank Objective
 func _init():
 	for p in Objective.new(null, \"null\").get_property_list():
 		parent_props[p.name] = true
-
+	
 func update_agent_prio(agent: Agent):
 	var text = \"\"
 	for i in range(len(agent.candidates)):

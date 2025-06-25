@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5l5figvn252a"
-path="res://.godot/imported/water.png-e1e3f5c57af4d2e27de421e777789582.ctex"
+uid="uid://c8yml865j2bf8"
+path="res://.godot/imported/farm.png-c0e6963e8f3fb9493e31193d4b6857ed.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://LTP_advanced_demo_project/water.png"
-dest_files=["res://.godot/imported/water.png-e1e3f5c57af4d2e27de421e777789582.ctex"]
+source_file="res://LTP_demo/advanced/farm.png"
+dest_files=["res://.godot/imported/farm.png-c0e6963e8f3fb9493e31193d4b6857ed.ctex"]
 
 [params]
 

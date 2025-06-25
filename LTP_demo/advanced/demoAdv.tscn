@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://lskl08duogmy"]
 
-[ext_resource type="PackedScene" uid="uid://ba7ruxwd6hkg6" path="res://LTP_advanced_demo_project/Agent.tscn" id="1_jd8qy"]
+[ext_resource type="PackedScene" uid="uid://ba7ruxwd6hkg6" path="res://LTP_demo/advanced/Agent.tscn" id="1_jd8qy"]
 [ext_resource type="PackedScene" uid="uid://brnqsdkqo7nch" path="res://addons/LTP/debug_view.tscn" id="2_xif3e"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_nruhl"]
