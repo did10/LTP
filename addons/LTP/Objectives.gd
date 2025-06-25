@@ -119,19 +119,36 @@ func reset():
 ## If a child has a higher priority than its parent's thats keept tho.
 func _raw_score() -> float:
 	return ((1)/(level*0.5)) + priority
-	
+
+## Reset is called if the objective state changes back to start. 
+## Please implement if you have some state that has to be reset, so the objective looks like newely implemented
 func _reset():
 	pass
+## Called once directly before work starts. Can be used e.g. to allocate ressources, tiles etc. 
 func _start_work() -> bool:
 	return true
+## Called once as soon as _check_resolved istrue for the first time or when reset is called and _start_work was called before.
+## This allows you to clean after up after the objective is over. 
+## This could e.g. be the freeing of allocated ressources etc.
 func _stop_work():
 	pass
+	
+## Here your actual work is done. Do things in here that bring you closer to _check_resolved being true. 
+## This might also include the spawing of new tasks.
 func _work() -> void:
 	pass
+## additional checks wether you can work or not. Can work needs to be true for _start_work and _work to be called.
+## This allows you to limit when work can be called. E.g. the objective "Drink" might only be called if water > 5.
 func _can_work() -> bool:
 	return true
+
+## If true the objective is resolved. This means that no additional work can or has to be done. 
+## If a parent task is resolved all childern are paused. 
+## If the objective is a task returning true will result in the deletion of the task 
 func _check_resolved() -> bool:
 	return true 
+
+# Returns wether the task is resolved without calling an update on the state
 func is_resolved() -> bool:
 	return _resolved
 
