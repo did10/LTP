@@ -1,0 +1,70 @@
+[gd_scene load_steps=5 format=3 uid="uid://lskl08duogmy"]
+
+[ext_resource type="PackedScene" uid="uid://ba7ruxwd6hkg6" path="res://LTP_advanced_demo_project/Agent.tscn" id="1_8krxm"]
+[ext_resource type="PackedScene" uid="uid://brnqsdkqo7nch" path="res://addons/LTP/debug_view.tscn" id="4_dsvcd"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_nruhl"]
+load_path = "res://.godot/imported/farm.png-6739f7809ff3df82e7552dd3c18a582f.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_pkg40"]
+load_path = "res://.godot/imported/water.png-86fbd139bb657a899eea13b5c5c3c486.ctex"
+
+[node name="SampleScene" type="Node2D"]
+
+[node name="Farm" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(1282.08, 592.9)
+scale = Vector2(2.86, 2.86)
+texture = SubResource("CompressedTexture2D_nruhl")
+
+[node name="Farm2" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(1178.08, 161.9)
+scale = Vector2(2.86, 2.86)
+texture = SubResource("CompressedTexture2D_nruhl")
+
+[node name="Farm3" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(1500.08, 537.9)
+scale = Vector2(2.86, 2.86)
+texture = SubResource("CompressedTexture2D_nruhl")
+
+[node name="Water" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(1095.08, 679.9)
+scale = Vector2(2.31725, 2.31725)
+texture = SubResource("CompressedTexture2D_pkg40")
+
+[node name="Water2" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(1594.08, 681.9)
+scale = Vector2(2.31725, 2.31725)
+texture = SubResource("CompressedTexture2D_pkg40")
+
+[node name="Agent" parent="." instance=ExtResource("1_8krxm")]
+position = Vector2(1335, 401)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="DebugView" parent="CanvasLayer" instance=ExtResource("4_dsvcd")]
+offset_right = -562.0
+
+[node name="Food" type="Label" parent="CanvasLayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -47.0
+offset_bottom = 23.0
+grow_horizontal = 0
+text = "5 Food"
+
+[node name="Water" type="Label" parent="CanvasLayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -51.0
+offset_top = 24.0
+offset_right = 1.0
+offset_bottom = 47.0
+grow_horizontal = 0
+text = "5 Food"

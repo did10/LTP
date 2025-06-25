@@ -1,0 +1,221 @@
+[gd_scene load_steps=3 format=3 uid="uid://brnqsdkqo7nch"]
+
+[sub_resource type="GDScript" id="GDScript_v452f"]
+script/source = "extends Control
+## so this is sadly only half baked. 
+## it works for debuging tho, i hope
+
+
+@export var graph_edit: GraphEdit
+@export var objective_prio: TextEdit
+@export var debug_console: TextEdit
+
+var obj_node_map := {}             # Objective → GraphNode
+var precond_count := {}           # Objective → last known precondition count
+var parent_props := {}            # Properties from a blank Objective
+
+func _init():
+	for p in Objective.new(null, \"null\").get_property_list():
+		parent_props[p.name] = true
+
+func update_agent_prio(agent: Agent):
+	
+	
+func update_graph(agent: Agent) -> void:
+	var objectives: Array[Objective] = agent.objectives
+	update_agent_prio(agent)
+	var existing = obj_node_map.keys()
+	var new_node_created = false
+	for o in existing:
+		if not objectives.has(o):
+			new_node_created = true
+			_remove_objective(o)
+
+	for o in objectives:
+		var current_pre = o._preconditions.size()
+
+		if obj_node_map.has(o) and precond_count[o] != current_pre:
+			new_node_created = true
+			_remove_objective(o)
+
+		if not obj_node_map.has(o):
+			_create_node(o)
+			new_node_created = true
+
+		_refresh_node(o)
+		precond_count[o] = current_pre
+
+	if new_node_created:
+		_rebuild_connections(objectives)
+		graph_edit.arrange_nodes()
+
+func _create_node(o: Objective) -> void:
+	var gn = GraphNode.new()
+	gn.resizable = true
+	gn.title = o.title
+	_configure_slots(gn)
+	_add_content_panels(gn)
+	_add_debug_button(gn, o)
+	graph_edit.add_child(gn)
+	obj_node_map[o] = gn
+	precond_count[o] = o._preconditions.size()
+
+func _configure_slots(gn: GraphNode) -> void:
+	gn.set_slot_enabled_right(0, true)
+	gn.set_slot_enabled_left(0, false)
+	gn.set_slot_enabled_left(1, true)
+	gn.set_slot_enabled_right(1, true)
+
+func _add_content_panels(gn: GraphNode) -> void:
+	var panels = [
+		{\"name\": \"spez_text\", \"size\": Vector2(250, 200)},
+		{\"name\": \"text\",       \"size\": Vector2(250, 350)},
+	]
+	for panel_dict in panels:
+		var name = panel_dict[\"name\"]
+		var size = panel_dict[\"size\"]
+		gn.add_child(HSeparator.new())
+		var te = TextEdit.new()
+		te.name = name
+		te.custom_minimum_size = size
+		te.editable = false
+		gn.add_child(te)
+
+func _add_debug_button(gn: GraphNode, o: Objective) -> void:
+	var btn = Button.new()
+	btn.text = \"D\"
+	btn.name = \"debuginfo\"
+	btn.pressed.connect(func(): debug_console.set_objective(o))
+	btn.tooltip_text = o.debug_text
+	gn.get_titlebar_hbox().add_child(btn)
+
+func _refresh_node(o: Objective) -> void:
+	var gn = obj_node_map[o]
+	gn.get_node(\"spez_text\").text = get_custom_variables(o)
+	gn.get_node(\"text\").text = _status_text(o)
+	_update_visual_state(gn, o)
+
+func _status_text(o: Objective) -> String:
+	var lines: Array[String] = [
+		\"level: %s\" % o.level,
+		\"prio: %s\" % o.priority,
+		\"score: %s\" % o.update_and_score(),
+		\"raw score: %s\" % o._raw_score(),
+		\"resolved check: %s\" % o._check_resolved(),
+		\"work_started: %s\" % o._work_started,
+		\"can_work: %s\" % o._can_work(),
+		\"finished: %s\" % o._work_finished,
+		\"preconds resolved: %s\" % o._preconditions_resolved(),
+		\"is_resolved: %s\" % o.is_resolved(),
+	]
+	var result = \"\"
+	for s in lines:
+		result += s + \"\\n\"
+	return result
+
+func _update_visual_state(gn: GraphNode, o: Objective) -> void:
+	var color: Color
+	var whole_color = Color.WHITE
+	if o._is_paused:
+		whole_color = Color.LIGHT_SLATE_GRAY
+	elif o.is_resolved():
+		color = Color.SEA_GREEN
+	elif o._work_started:
+		color = Color.YELLOW
+	elif not o._can_work():
+		color = Color.DARK_RED
+	else:
+		color = Color.WHITE
+	gn.self_modulate = color
+	gn.modulate = whole_color
+
+	var left_color = Color.SEA_GREEN if o.is_resolved() else Color.DARK_RED
+	var right_color = Color.SEA_GREEN if o._preconditions_resolved() else Color.DARK_RED
+	gn.set_slot_color_left(1, left_color)
+	gn.set_slot_color_right(1, right_color)
+
+func _rebuild_connections(objectives: Array[Objective]) -> void:
+	graph_edit.clear_connections()
+	for o in objectives:
+		for pre in o._preconditions.values():
+			graph_edit.connect_node(obj_node_map[o].name, 1, obj_node_map[pre].name, 0)
+		for task in o._tasks.values():
+			graph_edit.connect_node(obj_node_map[o].name, 0, obj_node_map[task].name, 0)
+
+func _remove_objective(o: Objective) -> void:
+	var gn = obj_node_map[o]
+	graph_edit.clear_connections()
+	gn.free()
+	obj_node_map.erase(o)
+	precond_count.erase(o)
+
+func get_custom_variables(o: Objective) -> String:
+	var out = \"\"
+	for prop in o.get_property_list():
+		if not parent_props.has(prop.name) and not prop.name.ends_with(\".gd\"):
+			out += \"%s: %s\\n\" % [prop.name, o.get(prop.name)]
+	return out
+"
+
+[sub_resource type="GDScript" id="GDScript_aof23"]
+script/source = "extends TextEdit
+
+var objectiv: Objective
+
+func _init() -> void:
+	LTPTicker.tick.connect(tick)
+
+func set_objective(objectiv: Objective):
+	self.objectiv = objectiv
+	tick()
+	
+func tick():
+	if objectiv != null:
+		text = objectiv.debug_text
+		scroll_vertical = get_line_count()
+"
+
+[node name="DebugView" type="Control" node_paths=PackedStringArray("graph_edit", "objective_prio", "debug_console")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = SubResource("GDScript_v452f")
+graph_edit = NodePath("SplitContainer/GraphEdit")
+objective_prio = NodePath("SplitContainer/VBox/ObjectivePrio")
+debug_console = NodePath("SplitContainer/VBox/DebugConsole")
+
+[node name="SplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -35.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="SplitContainer"]
+layout_mode = 2
+
+[node name="ObjectivePrio" type="TextEdit" parent="SplitContainer/VBox"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_vertical = 3
+editable = false
+
+[node name="DebugConsole" type="TextEdit" parent="SplitContainer/VBox"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_vertical = 3
+editable = false
+script = SubResource("GDScript_aof23")
+
+[node name="GraphEdit" type="GraphEdit" parent="SplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+scroll_offset = Vector2(-694, -8)
+zoom = 0.45

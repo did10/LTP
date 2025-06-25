@@ -1,0 +1,61 @@
+[gd_scene load_steps=3 format=3 uid="uid://ba7ruxwd6hkg6"]
+
+[sub_resource type="GDScript" id="GDScript_vi38n"]
+script/source = "extends Agent
+
+var food = -7.
+var water = 7.
+var walk_speed = 15
+
+func _init() -> void:
+	super()
+	LTPTicker.start() # start it in your game root, not here and only once for all instances
+	DontStarve2.new(self)
+	DontThirst2.new(self)
+
+func move_towards(to: Vector2):
+	var direction = to - self.position
+	if direction.length() <= walk_speed:
+		self.position = to
+		return
+	var dir = direction.normalized()
+	self.position = self.position + dir * walk_speed
+	
+func _update():
+	var debug_view = get_parent().get_node(\"CanvasLayer/DebugView\") # dont do it like that if you have globals you can use
+	debug_view.update_graph(self)
+	food = food -0.08
+	water = water -0.09
+	var food_label =  get_parent().get_node(\"CanvasLayer/Food\")
+	food_label.text = \"Food: \" + str(roundf(food*100)/100)
+	if food < 10:
+		food_label.modulate = Color.YELLOW
+	else:
+		food_label.modulate = Color.WHITE
+	if food < 0: # starved
+		food_label.text = \"Starving!\" + str(roundf(food*100)/100)
+		food_label.modulate = Color.RED
+		# queue_free()  <- lets not do that for the sample
+	var water_label =  get_parent().get_node(\"CanvasLayer/Water\")
+	water_label.text = \"Water: \" + str(roundf(water*100)/100)
+	if water < 10:
+		water_label.modulate = Color.YELLOW
+	else:
+		water_label.modulate = Color.WHITE
+	if water < 0: # starved
+		water_label.text = \"Thirst!\"+ str(roundf(water*100)/100)
+		water_label.modulate = Color.RED
+		# queue_free()  <- lets not do that for the sample
+		
+"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_d4qal"]
+load_path = "res://.godot/imported/icon.svg-2b131f641aeba062ee5ac8bee134f797.ctex"
+
+[node name="Agent" type="Node2D"]
+script = SubResource("GDScript_vi38n")
+
+[node name="Icon" type="Sprite2D" parent="."]
+position = Vector2(-1, 0)
+scale = Vector2(0.23, 0.23)
+texture = SubResource("CompressedTexture2D_d4qal")
