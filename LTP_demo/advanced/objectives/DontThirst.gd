@@ -10,7 +10,11 @@ func _work():
 func _can_work():
 	# has no active task or task is resolved
 	return not has_task("gather")
-	
+
+func _update():
+	update_priority(clamp(10 - (agent.water/10) * (agent.water/10) * 10, 0, 10))
+
+
 func _check_resolved():
 	#high number of food         
 	return  agent.water > 10

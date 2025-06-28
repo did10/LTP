@@ -6,8 +6,10 @@ var _tasks: Dictionary[String, Objective] = {}
 var _resolved_tasks: Dictionary[String, bool] = {}
 
 var level = 0
+var max_depth = IntRef.new(0) 
 var priority = 10
 
+var _root_node: Objective
 var _work_started := false
 var _work_finished := false
 var _is_paused := false
@@ -18,7 +20,7 @@ var agent: AgentInterface
 var prefered_next_task = null # A task that will be prefered after this task. Helpfull e.g. after a goto 
 
 var debug_text = ""
-
+static var _DEPTH_INFLUENCE = 4
 
 #  States that can be assumed:
 #  waiting_for_preconditions  --start_work--> working(work_started) --stop_work--> resolved
@@ -26,6 +28,7 @@ var debug_text = ""
 func _init(agent: AgentInterface, title:String) -> void:
 	self.agent=agent
 	self.title=title
+	self._root_node = self
 	if agent != null:
 		agent.new_objective(self)
 
@@ -74,7 +77,11 @@ func _update_state():
 ## The score automatically gets set to below 0 to avoid execution if it can't be worked on right now
 func update_and_score() -> float:
 	_update_state()
-	if _resolved or _is_paused or not _can_work() or not _preconditions_resolved():
+		
+	if _resolved or _is_paused:
+		return -1
+	_update()
+	if not _can_work() or not _preconditions_resolved():
 		return -1
 	return _raw_score()
 
@@ -119,7 +126,12 @@ func reset():
 ## Priority is set by the parent task. So the root task/objective sets the priority of its children.
 ## If a child has a higher priority than its parent's thats keept tho.
 func _raw_score() -> float:
-	return ((1)/((level+1)*0.5)) + priority
+	var depth
+	if max_depth.value == 0:
+		depth = 1.
+	else:
+		depth = (level / float(max_depth.value))
+	return (1-depth)**2 * _DEPTH_INFLUENCE + clamp(priority, 0, 10)
 
 ## Reset is called if the objective state changes back to start. 
 ## Please implement if you have some state that has to be reset, so the objective looks like newely implemented
@@ -175,15 +187,32 @@ func _unpause_children():
 		_preconditions[pre].unpause()
 	for task in _tasks:
 		_tasks[task].unpause()
-		
+
+## Function that is called every update_and_score() call for all objectives at an agent. 
+## This function can mainly be used to updated priorities and so on. 
+func _update():
+	pass
+	
+func update_child_data(o:Objective):
+	o.level = max(o.level, level + 1)
+	o.priority = max(o.priority, priority )
+	o._root_node = _root_node
+	o.max_depth = max_depth
+	max_depth.value = max(o.level, max_depth.value)
 
 ## Allow for the reset, after a precondition is set all children mus be updated as well!
 func _reset_preconditions():
 	for key in _preconditions:
 		var precon = _preconditions[key]
-		precon.level = max(precon.level, level + 1)
-		precon.priority = max(precon.priority, priority )
+		update_child_data(precon)
+		precon._reset_preconditions()
 
+func _reset_tasks():
+	for key in _tasks:
+		var task = _tasks[key]
+		update_child_data(task)
+		_resolved_tasks[key] = false
+		task._reset_preconditions()
 ## sets a list of precondition, removes the old preconditions
 ## Please supply a list of objectives and supply a name.
 ## The added objective can later be checked on by the name via precondition(key)
@@ -207,22 +236,14 @@ func set_preconditions(preconditions: Dictionary[String,Objective]):
 
 ## Add a new precondition with a name
 func add_precondition(precondition: Objective, key: String):
-	precondition.level = max(precondition.level, level + 1)
-	precondition.priority = max(precondition.priority, priority )
 	_preconditions[key] = precondition
+	update_child_data(precondition)
 	precondition._reset_preconditions()
 	precondition._reset_tasks()
 
 ## returns a precondition for a given key
 func precondition(key: String)->Objective:
 	return _preconditions[key]
-
-func _reset_tasks():
-	for key in _tasks:
-		var task = _tasks[key]
-		task.level = max(task.level, level + 1)
-		task.priority = max(task.priority, priority )
-		_resolved_tasks[key] = false
 
 ## Tasks are also objectives, but they are single shot. 
 ## Sets a list of named tasks that can later be checked on by name using task(key)
@@ -238,8 +259,7 @@ func set_tasks(tasks: Dictionary[String, Objective]):
 func add_task(task: Objective, key = null):
 	if key == null:
 		key = str(randi())
-	task.level = max(task.level, level + 1)
-	task.priority = max(task.priority, priority )
+	update_child_data(task)
 	task._task_parent = self
 	_tasks[key] = task
 	_resolved_tasks[key] = false
@@ -250,6 +270,7 @@ func remove_task(task: String, is_resolved: bool):
 	_resolved_tasks[task] = true
 	remove_from_agent(_tasks[task])
 	_tasks.erase(task)
+	
 ## Returns a task by its name 
 func task(key: String)->Objective:
 	return _tasks[key]
@@ -272,3 +293,19 @@ func remove_from_agent(o: Objective) -> void:
 		remove_from_agent(o._preconditions[pre])
 	for task in o._tasks:
 		remove_from_agent(o._tasks[task])
+		
+func update_priority(prio: float):
+	debug("Update prio" + str(prio))
+	priority = prio
+	for task in _tasks.values():
+		task.priority = priority
+		task.update_priority(priority)
+	for precon in _preconditions.values():
+		precon.priority = priority
+		precon.update_priority(priority)
+		
+
+class IntRef extends RefCounted:
+	var value: int
+	func _init(v: int):
+		value = v
