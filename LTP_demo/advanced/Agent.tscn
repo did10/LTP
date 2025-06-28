@@ -1,18 +1,28 @@
-[gd_scene load_steps=3 format=3 uid="uid://ba7ruxwd6hkg6"]
+[gd_scene load_steps=4 format=3 uid="uid://ba7ruxwd6hkg6"]
+
+[ext_resource type="SpriteFrames" uid="uid://dy8ibtcdpoq2s" path="res://LTP_demo/advanced/chill.tres" id="1_xktwa"]
 
 [sub_resource type="GDScript" id="GDScript_vi38n"]
 script/source = "extends Agent
 
 var food = 7.
 var water = 7.
+var stone = 0
+var wood = 0
+var chill = 0
 var walk_speed = 15
 
 func _init() -> void:
 	super()
 	LTPTicker.start() # start it in your game root, not here and only once for all instances
 	LTPTicker.interval = 0.03
+
+func _ready() -> void:
 	DontStarve2.new(self)
 	DontThirst2.new(self)
+	var bt = ChillAtTower.new(self)
+	bt.update_priority(1)
+	
 
 func move_towards(to: Vector2):
 	var direction = to - self.position
@@ -27,6 +37,7 @@ func _update():
 	debug_view.update_graph(self)
 	food = food -0.03
 	water = water -0.05
+	chill = max(chill -0.4, 0)
 	var food_label =  get_parent().get_node(\"CanvasLayer/Food\")
 	food_label.text = \"Food: \" + str(roundf(food*10)/10)
 	if food < 10:
@@ -47,7 +58,16 @@ func _update():
 		water_label.text = \"Thirst!\"+ str(roundf(water*10)/10)
 		water_label.modulate = Color.RED
 		# queue_free()  <- lets not do that for the sample
-		
+	var wood_label =  get_parent().get_node(\"CanvasLayer/Wood\")
+	wood_label.text = \"Wood: \" + str(wood)
+	var stone_label =  get_parent().get_node(\"CanvasLayer/Stone\")
+	stone_label.text = \"Stone: \" + str(stone)
+	var chill_label =  get_parent().get_node(\"CanvasLayer/Chill\")
+	chill_label.text = \"Chill: \" + str(roundf(chill*10)/10)
+	if chill > 150:
+		$chiller.show()
+	else: 
+		$chiller.hide()
 "
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_d4qal"]
@@ -60,3 +80,12 @@ script = SubResource("GDScript_vi38n")
 position = Vector2(-1, 0)
 scale = Vector2(0.23, 0.23)
 texture = SubResource("CompressedTexture2D_d4qal")
+
+[node name="chiller" type="AnimatedSprite2D" parent="."]
+visible = false
+texture_filter = 1
+position = Vector2(14, -4)
+scale = Vector2(0.799225, 0.817166)
+sprite_frames = ExtResource("1_xktwa")
+autoplay = "default"
+frame_progress = 0.0732228

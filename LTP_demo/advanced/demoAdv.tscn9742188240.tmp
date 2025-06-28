@@ -17,8 +17,8 @@ load_path = "res://.godot/imported/water.png-86fbd139bb657a899eea13b5c5c3c486.ct
 [sub_resource type="GDScript" id="GDScript_32he7"]
 script/source = "extends Node2D
 
-var working = false
-var ressources_supplied = false
+var working
+
 var age = 0
 
 func _init() -> void:
@@ -30,21 +30,16 @@ func _tick():
 		if age > 60*60:
 			break_down()
 	
-func pay_for_ressources():
-	ressources_supplied = true
-	
 func start_construction():
-	if ressources_supplied:
-		$TowerConstructionSite.show()
-		$Tower.hide()
-		$TowerBroken.hide()
+	$TowerConstructionSite.show()
+	$Tower.hide()
+	$TowerBroken.hide()
 
 func build():
 	$TowerConstructionSite.hide()
 	$Tower.show()
 	$TowerBroken.hide()
 	age = 0
-	ressources_supplied = false
 	working = true
 	
 func break_down():
@@ -165,16 +160,5 @@ offset_right = 1.0
 offset_bottom = 67.0
 grow_horizontal = 0
 text = "5 Wood"
-
-[node name="Chill" type="Label" parent="CanvasLayer"]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -59.0
-offset_top = 86.0
-offset_right = -1.0
-offset_bottom = 109.0
-grow_horizontal = 0
-text = "5 Chill"
 
 [node name="DebugView" parent="CanvasLayer" instance=ExtResource("2_xif3e")]

@@ -13,7 +13,7 @@ func pause():
 
 func _process(delta: float) -> void:
 	if active:
-		timer += delta
+		timer += min(delta, 1/60.)
 		while timer >= interval:
 			timer -= interval
 			tick.emit()

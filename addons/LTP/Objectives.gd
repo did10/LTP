@@ -34,7 +34,7 @@ func _init(agent: AgentInterface, title:String) -> void:
 
 func _preconditions_resolved() -> bool:
 	for req in _preconditions:
-		if _preconditions[req].is_resolved() == false:
+		if not _preconditions[req]._is_paused and _preconditions[req].is_resolved() == false:
 			return false
 	return true
 	
@@ -55,7 +55,7 @@ func _remove_finished_tasks():
 func work():
 	debug("Update objective")
 	_update_state()
-	if not _resolved and _preconditions_resolved() and _can_work(): ##  _preconditions_resolved() and _can_work() can be removed if you trust the scoring enogh
+	if not _resolved and _preconditions_resolved() and _can_work() and not _is_paused: ##  _preconditions_resolved() and _can_work() can be removed if you trust the scoring enogh
 		if not _work_started:
 			debug("Start")
 			_work_started = _start_work()
@@ -195,7 +195,7 @@ func _update():
 	
 func update_child_data(o:Objective):
 	o.level = max(o.level, level + 1)
-	o.priority = max(o.priority, priority )
+	o.priority = priority
 	o._root_node = _root_node
 	o.max_depth = max_depth
 	max_depth.value = max(o.level, max_depth.value)
@@ -244,6 +244,11 @@ func add_precondition(precondition: Objective, key: String):
 ## returns a precondition for a given key
 func precondition(key: String)->Objective:
 	return _preconditions[key]
+
+func remove_precondition(key: String):
+	remove_from_agent(_preconditions[key])
+	_preconditions.erase(key)
+	
 
 ## Tasks are also objectives, but they are single shot. 
 ## Sets a list of named tasks that can later be checked on by name using task(key)
