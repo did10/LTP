@@ -10,7 +10,7 @@ var walk_speed = 15
 func _init() -> void:
 	super()
 	LTPTicker.start() # start it in your game root, not here and only once for all instances
-	LTPTicker.interval = 0.003
+	LTPTicker.interval = 0.03
 	DontStarve2.new(self)
 	DontThirst2.new(self)
 

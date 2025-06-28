@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://brnqsdkqo7nch"]
+[gd_scene load_steps=4 format=3 uid="uid://brnqsdkqo7nch"]
 
 [sub_resource type="GDScript" id="GDScript_v452f"]
 script/source = "extends Control
@@ -180,6 +180,14 @@ func tick():
 		scroll_vertical = get_line_count()
 "
 
+[sub_resource type="GDScript" id="GDScript_ia5sj"]
+script/source = "extends HSlider
+
+
+func _on_value_changed(value: float) -> void:
+	LTPTicker.interval = 1 / value
+"
+
 [node name="DebugView" type="Control" node_paths=PackedStringArray("graph_edit", "objective_prio", "debug_console")]
 layout_mode = 3
 anchors_preset = 15
@@ -224,3 +232,27 @@ script = SubResource("GDScript_aof23")
 layout_mode = 2
 size_flags_horizontal = 3
 zoom = 0.45
+
+[node name="Hbox" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -199.0
+offset_top = 7.0
+offset_right = -47.0
+offset_bottom = 47.0
+grow_horizontal = 0
+
+[node name="SpeedLabel" type="Label" parent="Hbox"]
+layout_mode = 2
+text = "Speed"
+
+[node name="SpeedSlider" type="HSlider" parent="Hbox"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+script = SubResource("GDScript_ia5sj")
+
+[connection signal="value_changed" from="Hbox/SpeedSlider" to="Hbox/SpeedSlider" method="_on_value_changed"]
