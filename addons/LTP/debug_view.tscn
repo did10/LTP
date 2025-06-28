@@ -188,6 +188,9 @@ func _ready() -> void:
 
 func _on_value_changed(value: float) -> void:
 	LTPTicker.interval = 1 / value
+
+func _process(delta: float) -> void:
+	get_parent().get_node(\"SpeedLabel\").text = \"Speed (\" + str(LTPTicker.ticks_per_sec) + \")\"
 "
 
 [node name="DebugView" type="Control" node_paths=PackedStringArray("graph_edit", "objective_prio", "debug_console")]
