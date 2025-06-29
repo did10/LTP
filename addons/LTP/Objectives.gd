@@ -7,7 +7,7 @@ var _resolved_tasks: Dictionary[String, bool] = {}
 
 var level = 0
 var max_depth = IntRef.new(0) 
-var priority = 10
+var priority = Priority.new(5)
 
 var _root_node: Objective
 var _work_started := false
@@ -131,7 +131,7 @@ func _raw_score() -> float:
 		depth = 1.
 	else:
 		depth = (level / float(max_depth.value))
-	return (1-depth)**2 * _DEPTH_INFLUENCE + clamp(priority, 0, 10)
+	return (1-depth)**2 * _DEPTH_INFLUENCE + clamp(priority.value, 0, 10)
 
 ## Reset is called if the objective state changes back to start. 
 ## Please implement if you have some state that has to be reset, so the objective looks like newely implemented
@@ -301,16 +301,19 @@ func remove_from_agent(o: Objective) -> void:
 		
 func update_priority(prio: float):
 	debug("Update prio" + str(prio))
-	priority = prio
-	for task in _tasks.values():
-		task.priority = priority
-		task.update_priority(priority)
-	for precon in _preconditions.values():
-		precon.priority = priority
-		precon.update_priority(priority)
+	priority.set_value(prio)
 		
 
 class IntRef extends RefCounted:
 	var value: int
 	func _init(v: int):
 		value = v
+
+class Priority extends RefCounted:
+	var value: float
+	func _init(v: float):
+		value = v
+	func set_value(v: float):
+		value = clamp(v, 0, 10)
+	func v()->float:
+		return value
