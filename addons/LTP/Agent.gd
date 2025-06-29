@@ -29,7 +29,9 @@ func _tick( ) -> void:
 	var current_task_score = -1
 	var prefered_next_task_score = -1
 	for obj in objectives:
-		var score = obj.update_and_score()# update the objective state and get score
+		obj.update_state()
+	for obj in objectives:
+		var score = obj.score()# update the objective state and get score
 		var weight = score * abs(score)
 		if obj == current_active_task:
 			weight = weight * current_task_score_multiplier  

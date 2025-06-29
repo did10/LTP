@@ -103,7 +103,7 @@ func _status_text(o: Objective) -> String:
 		\"level: %s\" % o.level,
 		\"max level: %s\" % o.max_depth.value,
 		\"prio: %s\" % o.priority,
-		\"score: %s\" % o.update_and_score(),
+#		\"score: %s\" % o.update_and_score(),
 		\"raw score: %s\" % o._raw_score(),
 		\"resolved check: %s\" % o._check_resolved(),
 		\"work_started: %s\" % o._work_started,

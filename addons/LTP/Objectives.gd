@@ -54,7 +54,6 @@ func _remove_finished_tasks():
 ## This method also updates the state just in case. Might remove the update and security checks in the default setup without concequnces.
 func work():
 	debug("Update objective")
-	_update_state()
 	if not _resolved and _preconditions_resolved() and _can_work() and not _is_paused: ##  _preconditions_resolved() and _can_work() can be removed if you trust the scoring enogh
 		if not _work_started:
 			debug("Start")
@@ -65,7 +64,7 @@ func work():
 
 ## call _check_resolved, update the internal state if necessary and returns wether this task is resolved or not.
 ## This might change later after which the task is reactivated
-func _update_state():
+func update_state():
 	_resolved = _check_resolved()
 	if _work_finished and not _resolved: #resetart task
 		reset()
@@ -75,9 +74,7 @@ func _update_state():
 ## how likely the agent wants to do this task, higher -> more probable 
 ## Values below 0 won't be executed. 
 ## The score automatically gets set to below 0 to avoid execution if it can't be worked on right now
-func update_and_score() -> float:
-	_update_state()
-		
+func score() -> float:
 	if _resolved or _is_paused:
 		return -1
 	_update()
