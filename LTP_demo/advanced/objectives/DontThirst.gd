@@ -12,7 +12,7 @@ func _can_work():
 	return not has_task("gather")
 
 func _update():
-	update_priority(clamp(10 - (agent.water/10) * (agent.water/10) * 10, 0, 10))
+	update_priority(clamp(10 - (agent.water/10) * abs(agent.water/10) * 10, 0, 10))
 
 
 func _check_resolved():
