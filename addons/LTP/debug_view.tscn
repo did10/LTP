@@ -112,6 +112,7 @@ func _status_text(o: Objective) -> String:
 		\"preconds resolved: %s\" % o._preconditions_resolved(),
 		\"is_resolved: %s\" % o.is_resolved(),
 		\"is_paused: %s\" % o._is_paused,
+		\"active: %s\" % o._active,
 	]
 	var result = \"\"
 	for s in lines:
@@ -125,10 +126,12 @@ func _update_visual_state(gn: GraphNode, o: Objective) -> void:
 		whole_color = Color.LIGHT_SLATE_GRAY
 	elif o.is_resolved():
 		color = Color.SEA_GREEN
-	elif o._work_started:
+	elif o._active:
 		color = Color.YELLOW
-	elif not o._can_work():
+	elif not o._can_work() and o.score() > 0:
 		color = Color.DARK_RED
+	elif o.score() > 0:
+		color = Color.AQUA
 	else:
 		color = Color.WHITE
 	gn.self_modulate = color

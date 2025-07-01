@@ -15,6 +15,7 @@ var _work_finished := false
 var _is_paused := false
 var _task_parent = null
 var _resolved := false
+var _active := false
 
 var agent: AgentInterface
 var prefered_next_task = null # A task that will be prefered after this task. Helpfull e.g. after a goto 
@@ -57,8 +58,13 @@ func work():
 	if not _resolved and _preconditions_resolved() and _can_work() and not _is_paused: ##  _preconditions_resolved() and _can_work() can be removed if you trust the scoring enogh
 		if not _work_started:
 			debug("Start")
-			_work_started = _start_work()
-		if _work_started:
+			_work_started = true
+			_start_work()
+		if not _active:
+			debug("Activate")
+			_active = true
+			_activate()
+		if _work_started and _active:
 			debug("work")
 			_work()
 
@@ -84,6 +90,9 @@ func score() -> float:
 
 
 func _end_work():
+	if _active:
+		debug("Deactivate")
+		temporary_stop_work()
 	if _work_started:
 		debug("Stopped work successfully")
 		_stop_work()
@@ -97,6 +106,9 @@ func reset():
 	_work_started = false
 	_work_finished = false
 	debug_text = ""
+	if _active:
+		debug("Deactivate")
+		temporary_stop_work()
 	if _work_started and not _work_finished:
 		debug("Stop work")
 		_stop_work()
@@ -104,6 +116,15 @@ func reset():
 	_unpause_children()
 	debug("Reset objective to start")
 
+func temporary_stop_work():
+	_active = false
+	_deactivate()
+
+func _deactivate():
+	pass
+
+func _activate():
+	pass
 
 ## Sample raw score implementation
 ## depending on you situation you will likely override this. 
@@ -135,8 +156,8 @@ func _raw_score() -> float:
 func _reset():
 	pass
 ## Called once directly before work starts. Can be used e.g. to allocate ressources, tiles etc. 
-func _start_work() -> bool:
-	return true
+func _start_work() -> void:
+	pass
 ## Called once as soon as _check_resolved istrue for the first time or when reset is called and _start_work was called before.
 ## This allows you to clean after up after the objective is over. 
 ## This could e.g. be the freeing of allocated ressources etc.

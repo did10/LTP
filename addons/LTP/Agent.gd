@@ -42,6 +42,8 @@ func _tick( ) -> void:
 			candidates.append(obj)
 			weights.append(weight) # make it exponential so higher scores are choosen with a higher chance
 	if current_active_task == null or current_task_score < 0:
+		if current_active_task:
+			current_active_task.temporary_stop_work()
 		current_active_task = select_next_task(candidates, weights, prefered_next_task_score)
 		if current_active_task != null:
 			prefered_next_task = current_active_task.prefered_next_task
@@ -51,7 +53,7 @@ func _tick( ) -> void:
 		var max_weight = weights.max()
 		if max_weight > current_task_score:
 			var i = weights.find(max_weight)
-			current_active_task.reset() # reset the objectives state, so it will revert to the start, free claims/workplaces etc.
+			current_active_task.temporary_stop_work()
 			current_active_task = candidates[i]
 			prefered_next_task = current_active_task.prefered_next_task
 	if current_active_task != null:
